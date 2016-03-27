@@ -40,9 +40,29 @@
 ;;; Code:
 (require 'flycheck)
 
+(flycheck-def-option-var flycheck-cython-cplus nil cython
+  "Whether to run Cython in C++ code.
+
+Passes `--cplus' to cython if set."
+  :type 'boolean
+  :safe #'booleanp)
+
+(flycheck-def-option-var flycheck-cython-include-dir nil cython
+  "A list of include directories for Cython.
+
+The value of this variable is a list of strings, where each
+string is a directory to add to the include path of Cython."
+  :type '(repeat (directory :tag "Include directory"))
+  :safe #'flycheck-string-list-p)
+
 (flycheck-define-checker cython
   "Cython checker."
-  :command ("cython" "-Wextra" source-original)
+  :command ("cython"
+            "-Wextra"
+            (option-flag "--cplus" flycheck-cython-cplus)
+            (option-list "--include-dir" flycheck-cython-include-dir)
+            "-o" temporary-file-name
+            source-original)
   :error-patterns
   ((warning line-start
             "warning: "
