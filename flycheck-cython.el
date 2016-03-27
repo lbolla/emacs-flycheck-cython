@@ -44,7 +44,16 @@
   "Cython checker."
   :command ("cython" "-Wextra" source-original)
   :error-patterns
-  ((error line-start
+  ((warning line-start
+            "warning: "
+            (file-name)
+            ":"
+            line
+            ":"
+            column
+            ": "
+            (message) line-end)
+   (error line-start
           (file-name)
           ":"
           line
